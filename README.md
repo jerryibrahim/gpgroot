@@ -1,0 +1,2 @@
+# gpgroot
+GPG Offline Root
