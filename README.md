@@ -1,2 +1,3 @@
-# gpgroot
-GPG Offline Root
+# GPG Offline Root
+Setup for secure offline CA
+
