@@ -4,15 +4,15 @@ Setup for secure offline CA: [Offline Server Setup](Offline_Server_Setup.md)
 Setup Yubikey for distribution: [Setup Yubikey](Setup_Yubikey.md)   
 
 
-Setup new GPG Keys for <user@domain.com>
+## Setup new GPG Keys for <user@domain.com>
 
-Start offline GPGRoot CA server (Debian v9)  
-Ensure network adapter is disabled  
-Ensure disk arbitrator is running (activated checkbox, mode: blocks mounts)
+1. Start offline GPGRoot CA server (Debian v9)  
+2. Ensure network adapter is disabled  
+3. Ensure disk arbitrator is running (activated checkbox, mode: blocks mounts)
 
 ## Insert Encrypted USB
-Insert primary USB [Unlock + PIN + Unlock] then insert into USB port 
-Insert backup USB after primary is mounted [Unlock + PIN + Unlock] then insert into USB port
+1. Insert primary USB [Unlock + PIN + Unlock] then insert into USB port    
+2. Insert backup USB after primary is mounted [Unlock + PIN + Unlock] then insert into USB port
 
 ```
 > ~/scripts/primary_mount
@@ -20,9 +20,9 @@ Insert backup USB after primary is mounted [Unlock + PIN + Unlock] then insert i
 ```
 
 ## Setup yubikey
-Insert new yubikey and check Yubico.com in VMWare USB setting (not shared usb)  
-Validate initial default pin works  
-Change PIN|PUK retries to 5 [default 3]
+1. Insert new yubikey and check Yubico.com in VMWare USB setting (not shared usb)  
+2. Validate initial default pin works  
+3. Change PIN|PUK retries to 5 [default 3]
 
 ```
 > ykinfo -a (record serial for user in ‘User Yubi’
@@ -43,9 +43,9 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 
 
 ## Initialize GPGHOME directory
-Create GPGHOME on primary USB  
-Copy hardened gpg.conf from template folder  
-Run Random Generator: [passphrase for master write down on paper and **/media/usb/info.txt** file]
+1. Create GPGHOME on primary USB  
+2. Copy hardened gpg.conf from template folder  
+3. Run Random Generator: [passphrase for master write down on paper and **/media/usb/info.txt** file]
 
 ```
 > ~/scripts/00_gpg_initialize.sh
@@ -142,7 +142,6 @@ Note in the output of --list-secret-keys the keywords sec and ssb which means th
 ```
 > gpg --list-keys
 > gpg --list-secret-keys
-
 > ~/scripts/04_gpg_subkeys_backup.sh
 ```
 
@@ -218,8 +217,8 @@ ie: > mv gpg-backup gpg-backup.20180818
 > ~/scripts/all_unmount
 > sudo shutdown -h now
 ```
-Remove all USB drives and yubikey  
-After VM is shutdown quit VMWare Fusion
+1. Remove all USB drives and yubikey  
+2. After VM is shutdown quit VMWare Fusion
 
 
 ## Save SSH yubi public key on Mac

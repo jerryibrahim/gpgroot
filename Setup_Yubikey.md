@@ -72,8 +72,8 @@ which is the one that makes most sense for SSH:
 
 ## Copy public key to remote computer’s authorized_keys
 
-Generate public key  
-Create phantom private to enable ssh-copy-id to work
+1. Generate public key  
+2. Create phantom private to enable ssh-copy-id to work
 
 ```
 > cd ~/.ssh
@@ -89,14 +89,15 @@ Copy to remote system’s ~/.ssh/authorized_keys
 ```
 
 ## Setup Yubikey PIV PIN
-------------------------------
-Change Yubikey Admin PIN | PUK:  
-Change PIN|PUK retries to 5 [default 3]
+1. Verify pin [default 123456]  
+2. Change Yubikey PIN: [keep to 6 digits]  
+3. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
+4. Change PIN|PUK retries to 5 [default 3]
 
 ```
-> yubico-piv-tool -a verify-pin  [verify pin first, default 123456]
-> yubico-piv-tool -a change-pin  [change pin, keep to 6 digits]
-> yubico-piv-tool -a change-puk  [change puk, default 12345678, keep to 8 digits]
+> yubico-piv-tool -a verify-pin 
+> yubico-piv-tool -a change-pin
+> yubico-piv-tool -a change-puk
 > yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
 ```
 
