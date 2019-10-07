@@ -6,7 +6,6 @@
 > brew cask install gpg-suite
 > brew install gnupg ykman ykpers libyubikey yubico-piv-tool ykneomgr
 > which gp2 (check if gpg2 is already installed, if not brew install gpg2)
-
 > ykman list  (shows serial of Yubikey)
 > ykneomgr -m (should be 06)
 ```
@@ -18,7 +17,6 @@ Insert Yubikey into usb port.
 > gpg --import masterstubs.txt  [enter passphrase]
 > gpg --import subkeysstubs.txt
 > gpg --import publickey.txt
-
 > gpg --edit-key user@domain.com
 ```
 **Prompts:**
