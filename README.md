@@ -1,7 +1,7 @@
-# GPG Offline Root
+# Generate GPG Keys with offline root server
 
 Setup for secure offline CA: [Offline Server Setup](Offline_Server_Setup.md)   
-
+Setup Yubikey for distribution: [Setup Yubikey](Setup_Yubikey.md)   
 
 
 Setup new GPG Keys for <user@domain.com>
@@ -25,7 +25,7 @@ Validate initial default pin works
 Change PIN|PUK retries to 5 [default 3]
 
 ```
-> ykinfo -a (record serial for user in ‘Align Yubi’
+> ykinfo -a (record serial for user in ‘User Yubi’
 > yubico-piv-tool -a verify-pin  [verify pin first, default 123456]
 > yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
 ```
