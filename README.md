@@ -11,8 +11,8 @@ Ensure network adapter is disabled
 Ensure disk arbitrator is running (activated checkbox, mode: blocks mounts)
 
 ## Insert Encrypted USB
-Insert primary USB [Unlock + PIN + Unlock] then insert  
-Insert backup USB after primary is mounted [Unlock + PIN + Unlock] then insert
+Insert primary USB [Unlock + PIN + Unlock] then insert into USB port 
+Insert backup USB after primary is mounted [Unlock + PIN + Unlock] then insert into USB port
 
 ```
 > ~/scripts/primary_mount
