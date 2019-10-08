@@ -5,9 +5,10 @@
 ```
 > brew cask install gpg-suite
 > brew install gnupg ykman ykpers libyubikey yubico-piv-tool ykneomgr
-> which gp2 (check if gpg2 is already installed, if not brew install gpg2)
+> which gpg2 (check if gpg2 is already installed, if not brew install gpg2)
 > ykman list  (shows serial of Yubikey)
 > ykneomgr -m (should be 06)
+> ykneomgr --set-mode=6  (SET yubikey mode to OTP/U2F/CCID)
 ```
 
 ## Import GPG keys
@@ -36,7 +37,11 @@ Should see Yubikey info and gpg keys
 ## Disable ssh-agent at login
 
 ```
-> sudo launchctl disable user/jibrahim/com.openssh.ssh-agent -w
+> sudo launchctl disable user/username/com.openssh.ssh-agent -w
+-or-
+> mdfind ssh-agent|grep plist
+> launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
+> sudo launchctl disable system/com.openssh.ssh-agent
 ```
 
 ## Launch gpg-agent in ssh emulation mode at login
@@ -110,8 +115,8 @@ Copy to remote system’s ~/.ssh/authorized_keys
 
 * gpg/card> **admin**
 * gpg/card> **passwd**  
-* Your selection? **3** [change Admin PIN, default 12345678]  
-* Your selection? **1** [change PIN, default 123456]  
+* Your selection? **3** [change Admin PIN, default 12345678, recommend same as PUK PIN]  
+* Your selection? **1** [change PIN, default 123456, recommend same as PIV PIN]  
 * Your selection? **q** [quit]  
 * gpg/card> **name**  
 * Cardholder's surname: **LASTNAME**  
