@@ -140,3 +140,15 @@ Copy to remote system’s ~/.ssh/authorized_keys
 # Yubikey 4/5
 > ykman config usb --autoeject-timeout 180
 ```
+
+## Setup GIT for GPG signing
+1. Login into Github, Gitlab, Bitbucket and upload GPG public keys  
+2. Use last 16 chars of signature key and configure git  
+
+```
+> gpg --list-secret-keys --keyid-format LONG  # Capture 16 chars after rsa4096/ of signature key
+> git config --global user.signingkey <16 chars>
+> git config --global commit.gpgsign true
+
+> git log --show-signature  # To verify git commit has signature
+```
