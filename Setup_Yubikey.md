@@ -6,15 +6,13 @@
 > brew cask install gpg-suite
 > brew install gnupg ykman ykpers libyubikey yubico-piv-tool ykneomgr
 > which gpg2 (check if gpg2 is already installed, if not brew install gpg2)
-> ykman list  (shows serial of Yubikey)
-> ykneomgr -m (should be 06)
-> ykneomgr --set-mode=6  (SET yubikey mode to OTP/U2F/CCID)
 ```
 
 ## Import GPG keys
 Insert Yubikey into usb port.  
 
 ```
+> ykman list  (shows serial of Yubikey)
 > gpg --import masterstubs.txt  [enter passphrase]
 > gpg --import subkeysstubs.txt
 > gpg --import publickey.txt
@@ -123,3 +121,4 @@ Copy to remote system’s ~/.ssh/authorized_keys
 * Cardholder's given name: **FIRSTNAME**  
 * gpg/card> **quit** [enter admin PIN when prompted]
 
+## Setup Yubikey 

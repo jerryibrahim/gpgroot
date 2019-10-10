@@ -4,6 +4,21 @@ Setup for secure offline CA: [Offline Server Setup](Offline_Server_Setup.md)
 Setup Yubikey for distribution: [Setup Yubikey](Setup_Yubikey.md)   
 
 
+## Reset Yubikey (optional - for redistribution)
+
+* Delete OTP config for slot 1 & 2  
+* Reset PIV data  PIN: 123456  PUK: 12345678  
+* Reset OATH data  
+* Reset OpenPGP PIN: 123456  Admin Pin: 12345678  
+
+```
+> ykman otp delete 1 		
+> ykman otp delete 2		
+> ykman piv reset		 
+> ykman oath reset		
+> ykman openpgp reset	
+```
+
 ## Setup new GPG Keys for <user@domain.com>
 
 1. Start offline GPGRoot CA server (Debian v9)  
@@ -19,8 +34,8 @@ Setup Yubikey for distribution: [Setup Yubikey](Setup_Yubikey.md)
 > ~/scripts/backup_mount
 ```
 
-## Setup yubikey
-1. Insert new yubikey and check Yubico.com in VMWare USB setting (not shared usb)  
+## Setup Yubikey
+1. Insert new Yubikey and check Yubico.com in VMWare USB setting (not shared usb)  
 2. Validate initial default pin works  
 3. Change PIN|PUK retries to 5 [default 3]
 
@@ -62,6 +77,7 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 * pick: **4** RSA (sign only)  
 * keysize: **4096**  
 * valid for: **0**  [does not expire]  
+* Is this correct? (y/N) **y**  
 * real name: **Firstname Lastname**  
 * email address: **flastname@domain.com**  
 * Comment: **enter**  
@@ -91,7 +107,9 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 
 
 ## Create subkeys [Sign, Encrypt, Authenticate]
-Repeat this step for each yubikey or multiple subkeys for different devices
+Repeat this step for each Yubikey or multiple subkeys for different devices.  
+Tip: Make each set of subkeys 1 yr apart (ie. 10y and 11y).  
+Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 
 ```
 > ~/scripts/03_gpg_create_subkeys.sh
@@ -160,11 +178,12 @@ Moving subkeys to a Yubikey is a destructive operation, so make sure you took ba
 
 **Prompts:**  
 
-* gpg> **toggle**  
-* Your selection? **8** (RSA set your own capabilities)  
+* gpg> **toggle**   
 * gpg> **key 1** (first key ssb*)  
 * gpg> **keytocard**  
 * Your selection? **1** (signature)
+* Admin PIN: **12345678**
+* Repeat Admin PIN: **12345678**
 * gpg> **key 1** (first key ssb deselected)
 * gpg> **key 2** (second key ssb*)
 * gpg> **keytocard** 
@@ -182,18 +201,6 @@ Moving subkeys to a Yubikey is a destructive operation, so make sure you took ba
 > gpg --list-secret-keys
 > ~/scripts/06_gpg_stubs_backup.sh
 ```
-
-## Mark the key as ultimately trusted
-
-```
-> ~/scripts/07_gpg_ultimate_trust.sh
-```
-**Prompts:**  
-
-* gpg> **trust**  
-* Your decision? **5** (I trust ultimately)
-* Do you really want to set this key to ultimate trust? (y/N) **y**
-* gpg> **save**
 
 
 ## Backup Secure USB #1 to #2
@@ -217,26 +224,35 @@ ie: > mv gpg-backup gpg-backup.20180818
 > ~/scripts/all_unmount
 > sudo shutdown -h now
 ```
-1. Remove all USB drives and yubikey  
+1. Remove all USB drives and Yubikey  
 2. After VM is shutdown quit VMWare Fusion
 
 
-## Save SSH yubi public key on Mac
-generate public ssh key (with yubikey inserted) 
+## Save SSH Yubikey public key on Mac
+1. Record serial number for asset tracking
+2. Generate public ssh key (with Yubikey inserted) 
 
 ```
-> cd ~/Documents/k
+> cd ~/Documents/keys
+> ykinfo -a (Note serial number to add append into text file)
+> vim yubikeys.txt
 > mkdir username
 > cd username
 > ssh-add -L | grep cardno > username_yubi_serial.pub
 ```
 
-## Setup to require touch on yubikey on MAC
+## Setup to require touch on Yubikey on MAC
+**ykman set-touch aut on** does not seem to work with Yubikey 5
 
 ```
 > ykman otp delete 1  (stop otp from touch)
+
+-- Yubikey 4 --
 > ykman openpgp set-touch aut on
 > ykman openpgp set-touch enc on
-> ykman openpgp set-touch sig on
+> ykman openpgp set-touch sig on 
+
+-- Yubikey 4/5 --
+> ykman config usb --autoeject-timeout 180
 ```
 
