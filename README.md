@@ -247,12 +247,14 @@ ie: > mv gpg-backup gpg-backup.20180818
 ```
 > ykman otp delete 1  (stop otp from touch)
 
--- Yubikey 4 --
+# Yubikey 4
 > ykman openpgp set-touch aut on
 > ykman openpgp set-touch enc on
 > ykman openpgp set-touch sig on 
 
--- Yubikey 4/5 --
+- or -
+
+# Yubikey 4/5
 > ykman config usb --autoeject-timeout 180
 ```
 
