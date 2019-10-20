@@ -9,9 +9,14 @@
 ```
 
 ## Import GPG keys
-Insert Yubikey into usb port.  
+Insert Yubikey into usb port.  Copy contents to ~/Documents/keys
 
 ```
+> mkdir ~/Documents/keys
+> cd ~/Documents/keys
+
+# copy your keys from usb drive to the new keys folder just created
+
 > ykman list  (shows serial of Yubikey)
 > gpg --import masterstubs.txt  [enter passphrase]
 > gpg --import subkeysstubs.txt
@@ -45,35 +50,28 @@ Should see Yubikey info and gpg keys
 ```
 
 ## Launch gpg-agent in ssh emulation mode at login
-Modify/create a gpg-agent.conf file in ~/.gnupg:
+Append the following to ~/.gnupg/gpg-agent.conf  
+> pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac  
+> enable-ssh-support  
 
 ```
-> cat ~/.gnupg/gpg-agent.conf
-pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac
-enable-ssh-support
-default-cache-ttl 600
-max-cache-ttl 7200
+> echo -e "\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\n" >> ~/.gnupg/gpg-agent.conf
 ```
 
-Launch gpg-agent in your .zshrc or .zprofile and export the SSH_AUTH_SOCK env variable to # point to the gpg-agent socket. 
-
-```
-> cat ~/.bash_profile
-gpg-agent --daemon
-export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
-```
+## Update terminal profiles
+Update your .bash\_profile, .zshrc, .zprofile.  You will need to restart your shell or source your profile script.  
+Append the following to ~/.bash\_profile (or other profile script)  
+> gpg-agent --daemon  
+> export SSH\_AUTH\_SOCK=\$HOME/.gnupg/S.gpg-agent.ssh
 
 
-Require touch capabilities on the Yubikey for the OpenPGP keys
-Use ykman to enable "aut" touch behavior. For instance, to enable touch for the "aut" key 
-which is the one that makes most sense for SSH:
+```
+> echo -e "\n# Added for Yubikey support\ngpg-agent --daemon\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\n" >> ~/.bash_profile
 
+# exit terminal and restart terminal shell
 ```
-> ykman otp delete 1  (stop otp from touch)
-> ykman openpgp set-touch aut on
-> ykman openpgp set-touch enc on
-> ykman openpgp set-touch sig on
-```
+
+
 
 ## Copy public key to remote computer’s authorized_keys
 
@@ -82,25 +80,25 @@ which is the one that makes most sense for SSH:
 
 ```
 > cd ~/.ssh
-> ssh-add -L | grep cardno > username_yubi.pub
+> ssh-add -L > username_yubi.pub
 > cp username_yubi.pub username_yubi
+> chmod 600 username_yubi
 ```
 
 
-Copy to remote system’s ~/.ssh/authorized_keys
+**Optional:** copy to remote system’s ~/.ssh/authorized_keys
 
 ```
 > ssh-copy-id -i username_yubi.pub user@hostname
 ```
 
 ## Setup Yubikey PIV PIN
-1. Verify pin [default 123456]  
-2. Change Yubikey PIN: [keep to 6 digits]  
-3. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
-4. Change PIN|PUK retries to 5 [default 3]
+ 
+1. Change Yubikey PIN: [default 123456, keep to 6 digits]  
+2. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
+3. Change PIN|PUK retries to 5
 
 ```
-> yubico-piv-tool -a verify-pin 
 > yubico-piv-tool -a change-pin
 > yubico-piv-tool -a change-puk
 > yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
@@ -119,30 +117,19 @@ Copy to remote system’s ~/.ssh/authorized_keys
 * Your selection? **1** [change PIN, default 123456, recommend same as PIV PIN]  
 * Your selection? **q** [quit]  
 * gpg/card> **name**  
-* Cardholder's surname: **LASTNAME**  
-* Cardholder's given name: **FIRSTNAME**  
+* Cardholder's surname: **Lastname**  
+* Cardholder's given name: **Firstname**  
 * gpg/card> **quit** [enter admin PIN when prompted]
 
 
-## Setup to require touch on Yubikey
-**ykman set-touch aut on** does not seem to work with Yubikey 5
+## Setup Yubikey to auto eject after 3 min
 
 ```
-> ykman otp delete 1  (stop otp from touch)
-
-# Yubikey 4
-> ykman openpgp set-touch aut on
-> ykman openpgp set-touch enc on
-> ykman openpgp set-touch sig on 
-
-- or -
-
-# Yubikey 4/5
 > ykman config usb --autoeject-timeout 180
 ```
 
 ## Setup GIT for GPG signing
-1. Login into Github, Gitlab, Bitbucket and upload GPG public keys  
+1. Login into Github, Gitlab, Bitbucket and upload GPG public key **publickey.txt**  
 2. Use last 16 chars of signature key and configure git  
 
 ```

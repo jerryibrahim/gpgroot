@@ -40,19 +40,15 @@ Setup Yubikey for distribution: [Setup Yubikey](Setup_Yubikey.md)
 3. Change PIN|PUK retries to 5 [default 3]
 
 ```
-> ykinfo -a (record serial for user in ‘User Yubi’
-> yubico-piv-tool -a verify-pin  [verify pin first, default 123456]
-> yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
+> ykinfo -a (record serial for user in ‘User Yubi’)
+> yubi_retries.sh  [default PIN: 123456]
 ```
 
 ## Setup GPGHOME
 Edit gpghome-username.sh and replace ‘user’ with ‘username’
 
 ```
-> cd ~/scripts
-> cp gpghome-user.sh gpghome-username.sh
-> vim gpghome-username.sh
-> . ./gpghome-username.sh
+> . ./gpghome-user.sh <username>
 > echo $GNUPGHOME (make sure path looks right)
 ```
 
@@ -60,18 +56,26 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 ## Initialize GPGHOME directory
 1. Create GPGHOME on primary USB  
 2. Copy hardened gpg.conf from template folder  
-3. Run Random Generator: [passphrase for master write down on paper and **/media/usb/info.txt** file]
+3. Use random string to generate the  **GPGPASSPHRASE**. [passphrase for master write down on paper and **/media/usb/info.txt** file]
 
 ```
 > ~/scripts/00_gpg_initialize.sh
+> vim /media/usb/info.txt
+
+- Optional -
 > gpg --gen-random -a 0 24 
 ```
 
 ## Generate GPG Master Key
 
 ```
+> q01_gpg_create.sh "Firstname Lastname <user@domain.com>"
+
+- or -
+
 > gpg --full-generate-key   [to get 4096 key length option]
 ```
+
 **Prompts:** 
  
 * pick: **4** RSA (sign only)  
@@ -82,14 +86,21 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 * email address: **flastname@domain.com**  
 * Comment: **enter**  
 * Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? **O**  
-* Passphrase: **enter gpg random string**  
+* Passphrase:  **GPGPASSPHRASE**      
+* Re-Enter Passphrase: **GPGPASSPHRASE**      
 
-## Create revocation certificate
+## Backup revocation certificate
 
 ```
+> . ./q02_gpg_revocation.sh
+> echo $GPGKEY 	#to validate
+
+- or -
+
 > export GPGKEY=6DEABF369
 > ~/scripts/01_gpg_revocation.sh
 ```
+
 **Prompts:**  
 
 * Create a revocation certificate for this key? (y/N) **y**  
@@ -97,6 +108,7 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 * Enter an optional description; end it with an empty line:  
 **Created during key creation, emergency use only.**  
 * Is this okay? (y/N) **y**
+* Passphrase:  **GPGPASSPHRASE**      
 
 
 ## Create backup of master key
@@ -105,6 +117,10 @@ Edit gpghome-username.sh and replace ‘user’ with ‘username’
 > ~/scripts/02_gpg_master_backup.sh
 ```
 
+**Prompts:**  
+
+* Passphrase:  **GPGPASSPHRASE**      
+
 
 ## Create subkeys [Sign, Encrypt, Authenticate]
 Repeat this step for each Yubikey or multiple subkeys for different devices.  
@@ -112,6 +128,10 @@ Tip: Make each set of subkeys 1 yr apart (ie. 10y and 11y).
 Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 
 ```
+> q03_gpg_subkeys.sh
+
+- or -
+
 > ~/scripts/03_gpg_create_subkeys.sh
 ```
 **Prompts:**  
@@ -122,6 +142,7 @@ Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 * Key is valid for? (0) **10y**  
 * Is this correct? (y/N) **y**  
 * Really create? (y/N) **y**  
+* Passphrase:  **GPGPASSPHRASE**      
 
 ---
 **Prompts:**  
@@ -132,6 +153,7 @@ Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 * Key is valid for? (0) **10y**  
 * Is this correct? (y/N) **y**  
 * Really create? (y/N) **y**  
+* Passphrase:  **GPGPASSPHRASE**      
 
 ---
 **Prompts:**  
@@ -146,6 +168,7 @@ Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 * Key is valid for? (0) **10y**  
 * Is this correct? (y/N) **y**  
 * Really create? (y/N) **y**  
+* Passphrase:  **GPGPASSPHRASE**      
 
 ---
 **Prompts:**  
@@ -155,19 +178,18 @@ Create all subkeys (multiple sets) before moving to Yubikey (keytocard).
 
 
 ## Export subkeys for backup
-Note in the output of --list-secret-keys the keywords sec and ssb which means the main key and the subkeys are available. If the secret keyring contained only stubs, it would be sec> and sec#.
+Note in the output of <i>gpg --list-secret-keys</i> the keywords **ssb** which means the subkeys secrets are available on the local GPG keyring. 
 
 ```
-> gpg --list-keys
 > gpg --list-secret-keys
 > ~/scripts/04_gpg_subkeys_backup.sh
 ```
 
-## Configure machine for smartcards
+**Prompts:**  
 
-```
-> gpg-agent --daemon
-```
+* Passphrase:  **GPGPASSPHRASE**      
+* Passphrase:  **GPGPASSPHRASE**      
+
 
 ## Move subkeys to YubiKey
 Moving subkeys to a Yubikey is a destructive operation, so make sure you took backups of the subkeys as above. After this step, your GnuPG keyring will contain stubs for the subkeys.
@@ -182,25 +204,35 @@ Moving subkeys to a Yubikey is a destructive operation, so make sure you took ba
 * gpg> **key 1** (first key ssb*)  
 * gpg> **keytocard**  
 * Your selection? **1** (signature)
+* Passphrase: **GPGPASSPHRASE**
 * Admin PIN: **12345678**
 * Repeat Admin PIN: **12345678**
 * gpg> **key 1** (first key ssb deselected)
 * gpg> **key 2** (second key ssb*)
 * gpg> **keytocard** 
 * Your selection? **2** (encryption)
+* Passphrase: **GPGPASSPHRASE**
+* Admin PIN: **12345678**
 * gpg> **key 2** (second key ssb deselected)
 * gpg> **key 3** (third key ssb*)
 * gpg> **keytocard** 
 * Your selection? **3** (authentication)
+* Passphrase: **GPGPASSPHRASE**
+* Admin PIN: **12345678**
 * gpg> **save** 
 
 
-## Export subkeys for backup
+## Export subkey stubs for backup
+Note in the output of <i>gpg --list-secret-keys</i> the keywords **ssb>** which means the subkeys secrets are moved to the Yubikey and only the stubs are available on the local GPG keyring. 
 
 ```
 > gpg --list-secret-keys
 > ~/scripts/06_gpg_stubs_backup.sh
 ```
+
+**Prompts:**  
+
+* Passphrase:  **GPGPASSPHRASE**      
 
 
 ## Backup Secure USB #1 to #2
@@ -234,11 +266,11 @@ ie: > mv gpg-backup gpg-backup.20180818
 
 ```
 > cd ~/Documents/keys
-> ykinfo -a (Note serial number to add append into text file)
+> ykinfo -a (Note serial number to append into text file)
 > vim yubikeys.txt
 > mkdir username
 > cd username
-> ssh-add -L | grep cardno > username_yubi_serial.pub
+> ssh-add -L > username_yubi_serial.pub
 ```
 
 ## Setup to require touch on Yubikey on MAC
@@ -257,4 +289,3 @@ ie: > mv gpg-backup gpg-backup.20180818
 # Yubikey 4/5
 > ykman config usb --autoeject-timeout 180
 ```
-

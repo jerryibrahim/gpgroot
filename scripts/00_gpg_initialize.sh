@@ -8,3 +8,4 @@ pwd
 ls -la
 cd ~
 sudo rngd -r /dev/urandom
+gpg --gen-random -a 0 24
