@@ -1,4 +1,4 @@
-# Setup Yubikey
+# Setup Yubikey from offline key generation
 
 ## Setup Mac for Yubikey and GPG
 
@@ -72,26 +72,6 @@ Append the following to ~/.bash\_profile (or other profile script)
 ```
 
 
-
-## Copy public key to remote computer’s authorized_keys
-
-1. Generate public key  
-2. Create phantom private to enable ssh-copy-id to work
-
-```
-> cd ~/.ssh
-> ssh-add -L > username_yubi.pub
-> cp username_yubi.pub username_yubi
-> chmod 600 username_yubi
-```
-
-
-**Optional:** copy to remote system’s ~/.ssh/authorized_keys
-
-```
-> ssh-copy-id -i username_yubi.pub user@hostname
-```
-
 ## Setup Yubikey PIV PIN
  
 1. Change Yubikey PIN: [default 123456, keep to 6 digits]  
@@ -128,14 +108,6 @@ Append the following to ~/.bash\_profile (or other profile script)
 > ykman config usb --autoeject-timeout 180
 ```
 
-## Setup GIT for GPG signing
-1. Login into Github, Gitlab, Bitbucket and upload GPG public key **publickey.txt**  
-2. Use last 16 chars of signature key and configure git  
 
-```
-> gpg --list-secret-keys --keyid-format LONG  # Capture 16 chars after rsa4096/ of signature key
-> git config --global user.signingkey <16 chars>
-> git config --global commit.gpgsign true
-
-> git log --show-signature  # To verify git commit has signature
-```
+## Yubikey Usage Info
+[Yubikey usage](yubikey_usage.md) 
