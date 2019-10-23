@@ -5,7 +5,7 @@ Using VMWare Fusion
 ## Setup minimal server with user as the username
 
 ### Install some utilities
-
+  
 ```
 > su root (so you can install sudo)
 > apt install sudo
