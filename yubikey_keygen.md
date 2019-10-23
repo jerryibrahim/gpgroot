@@ -32,6 +32,77 @@ Note: This is a shim backup of the private key, not a full backup, and cannot be
 16. Make offline backups of revocation and signature key stub.
 
 
+## Disable ssh-agent at login
+
+```
+> sudo launchctl disable user/username/com.openssh.ssh-agent -w
+
+- or -
+
+> mdfind ssh-agent|grep plist
+> launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
+> sudo launchctl disable system/com.openssh.ssh-agent
+```
+
+## Launch gpg-agent in ssh emulation mode at login
+Append the following to ~/.gnupg/gpg-agent.conf  
+> pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac  
+> enable-ssh-support  
+
+```
+> echo -e "\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\n" >> ~/.gnupg/gpg-agent.conf
+```
+
+## Update terminal profiles
+Update your .bash\_profile, .zshrc, .zprofile.  You will need to restart your shell or source your profile script.  
+Append the following to ~/.bash\_profile (or other profile script)  
+> gpg-agent --daemon  
+> export SSH\_AUTH\_SOCK=\$HOME/.gnupg/S.gpg-agent.ssh
+
+
+```
+> echo -e "\n# Added for Yubikey support\ngpg-agent --daemon\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\n" >> ~/.bash_profile
+
+# exit terminal and restart terminal shell
+```
+
+
+## Setup Yubikey PIV PIN
+ 
+1. Change Yubikey PIN: [default 123456, keep to 6 digits]  
+2. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
+3. Change PIN|PUK retries to 5
+
+```
+> yubico-piv-tool -a change-pin
+> yubico-piv-tool -a change-puk
+> yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
+```
+
+## Setup Yubikey GPG PIN
+
+```
+>  gpg --card-edit
+```
+**Prompts:**  
+
+* gpg/card> **admin**
+* gpg/card> **passwd**  
+* Your selection? **3** [change Admin PIN, default 12345678, recommend same as PUK PIN]  
+* Your selection? **1** [change PIN, default 123456, recommend same as PIV PIN]  
+* Your selection? **q** [quit]  
+* gpg/card> **name**  
+* Cardholder's surname: **Lastname**  
+* Cardholder's given name: **Firstname**  
+* gpg/card> **quit** [enter admin PIN when prompted]
+
+
+## Setup Yubikey to auto eject after 3 min
+
+```
+> ykman config usb --autoeject-timeout 180
+```
+
 
 ## Yubikey Usage Info
 [Yubikey usage](yubikey_usage.md) 
