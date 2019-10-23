@@ -21,7 +21,7 @@ Setup instructions for creating secure offline server: [Offline Server Setup](of
 
 ## Setup new GPG Keys for <user@domain.com>
 
-1. Start offline GPGRoot CA server (Debian v9)  
+1. Start offline server (Debian v9)  
 2. Ensure network adapter is disabled  
 3. Ensure disk arbitrator is running (activated checkbox, mode: blocks mounts)
 

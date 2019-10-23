@@ -1,5 +1,5 @@
-# Generating Your PGP Key directly on Your YubiKey
-Warning: Generating the PGP on the YubiKey ensures that malware can never steal your PGP private key, but it means that the key can not be backed up so if your YubiKey is lost or damaged the PGP key is irrecoverable.  [source](https://support.yubico.com/support/solutions/articles/15000006420-using-your-yubikey-with-openpgp) 
+# Generating Your GPG Key directly on Your YubiKey
+Warning: Generating the GPG on the YubiKey ensures that malware can never steal your GPG private key, but it means that the key can not be backed up so if your YubiKey is lost or damaged the GPG key is irrecoverable.  [source](https://support.yubico.com/support/solutions/articles/15000006420-using-your-yubikey-with-openpgp) 
 
 
 
