@@ -284,9 +284,11 @@ ie: > mv gpg-backup gpg-backup.20180818
 > ykman openpgp set-touch enc on
 > ykman openpgp set-touch sig on 
 
+> ykpersonalize -m86:15:180  # 15 sec challenge response, 180 sec auto eject
+
 - or -
 
-# Yubikey 4/5
+# Yubikey 5
 > ykman config usb --autoeject-timeout 180
 ```
 
