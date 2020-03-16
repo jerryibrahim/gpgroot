@@ -26,6 +26,7 @@
 
 ```
 > gpg --list-secret-keys --keyid-format LONG  # Capture 16 chars after rsa4096/ of signature key
+> gpg --list-secret-keys --keyid-format LONG | grep "\[S\]" | awk '{print $2}' | cut -c9-24
 > git config --global user.signingkey <16 chars>
 > git config --global commit.gpgsign true
 
