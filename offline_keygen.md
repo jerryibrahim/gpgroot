@@ -253,7 +253,7 @@ ie: > mv gpg-backup gpg-backup.20180818
 ## Remove Encrypted USB
 
 ```
-> ~/scripts/all_unmount
+> ~/scripts/all_unmount.sh
 > sudo shutdown -h now
 ```
 1. Remove all USB drives and Yubikey  
@@ -284,12 +284,12 @@ ie: > mv gpg-backup gpg-backup.20180818
 > ykman openpgp set-touch enc on
 > ykman openpgp set-touch sig on 
 
-> ykpersonalize -m86:15:180  # 15 sec challenge response, 180 sec auto eject
+> ykpersonalize -m86:15:300  # 15 sec challenge response,300 sec auto eject
 
 - or -
 
 # Yubikey 5
-> ykman config usb --autoeject-timeout 180
+> ykman config usb --autoeject-timeout 300
 ```
 
 ## Publish GPG Key

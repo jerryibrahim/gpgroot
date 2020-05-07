@@ -102,10 +102,10 @@ Append the following to ~/.bash\_profile (or other profile script)
 * gpg/card> **quit** [enter admin PIN when prompted]
 
 
-## Setup Yubikey to auto eject after 3 min
+## Setup Yubikey to auto eject after 5 min
 
 ```
-> ykman config usb --autoeject-timeout 180
+> ykman config usb --autoeject-timeout 300
 ```
 
 
