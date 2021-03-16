@@ -46,9 +46,9 @@ Using VMWare Fusion
 ```
 > cd ~
 > git clone https://github.com/jerryibrahim/gpgroot
-> cp ~/gpgroot/scripts/* ~/scripts
-> cp ~/gpgroot/template/* ~/template
-> rm -r gpgroot
+> cp -r ~/gpgroot/scripts ~/scripts
+> cp -r ~/gpgroot/template ~/template
+> rm -rf gpgroot
 ```
 
 ### Validate Encrypted USB stick is visible:
