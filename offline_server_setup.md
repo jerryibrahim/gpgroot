@@ -31,6 +31,9 @@ Using VMWare Fusion
 > sudo apt install libjson-c-dev
 > sudo apt install vim
 > sudo apt install git
+> sudo apt install gpm
+> sudo apt install man-db
+
 
 > sudo apt install dirmngr
 > sudo apt install cryptsetup
