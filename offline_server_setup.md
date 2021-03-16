@@ -1,5 +1,5 @@
 # Setup Offline Server
-Using Debian v9  
+Using Debian v10 (buster)  
 Using VMWare Fusion 
 
 ## Setup minimal server with user as the username
@@ -21,9 +21,7 @@ Using VMWare Fusion
 > sudo apt install gnupg2
 > sudo apt install scdaemon
 > sudo apt install yubikey-personalization
-> sudo apt install yubico-piv-tool
-> sudo apt install yubikey-neo-manager 
-> sudo apt install ykneomgr
+> sudo apt install yubikey-manager
 > sudo apt install pcscd
 > sudo apt install pcsc-tools
 > sudo apt install software-properties-common
@@ -39,6 +37,8 @@ Using VMWare Fusion
 > sudo apt install secure-delete
 > sudo apt install hopenpgp-tools
 > sudo apt install rng-tools
+
+> sudo apt install --reinstall python3-pkg-resources
 ```
 
 ### Install helper scripts/template
