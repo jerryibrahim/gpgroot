@@ -51,22 +51,31 @@ Should see Yubikey info and gpg keys
 
 ## Launch gpg-agent in ssh emulation mode at login
 Append the following to ~/.gnupg/gpg-agent.conf  
+> default-cache-ttl-ssh 600 
+> max-cache-ttl-ssh 7200 
 > pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac  
 > enable-ssh-support  
 
 ```
-> echo -e "\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\n" >> ~/.gnupg/gpg-agent.conf
+> echo -e "\n# Added for Yubikey support\ndefault-cache-ttl-ssh 600\nmax-cache-ttl-ssh 7200\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\n" >> ~/.gnupg/gpg-agent.conf
 ```
 
 ## Update terminal profiles
 Update your .bash\_profile, .zshrc, .zprofile.  You will need to restart your shell or source your profile script.  
 Append the following to ~/.bash\_profile (or other profile script)  
+> export LANG=en  
+> export LC_ALL=en_US.UTF-8  
+> export GPG_TTY=$(tty)  
+> export SSH\_AUTH\_SOCK=\$HOME/.gnupg/S.gpg-agent.ssh  
 > gpg-agent --daemon  
-> export SSH\_AUTH\_SOCK=\$HOME/.gnupg/S.gpg-agent.ssh
-
+> alias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'  
 
 ```
-> echo -e "\n# Added for Yubikey support\ngpg-agent --daemon\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\n" >> ~/.bash_profile
+# bash profile
+> echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.bash_profile
+
+# zsh profile
+> echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.zprofile
 
 # exit terminal and restart terminal shell
 ```
