@@ -51,8 +51,8 @@ Should see Yubikey info and gpg keys
 
 ## Launch gpg-agent in ssh emulation mode at login
 Append the following to ~/.gnupg/gpg-agent.conf  
-> default-cache-ttl-ssh 600 
-> max-cache-ttl-ssh 7200 
+> default-cache-ttl-ssh 600  
+> max-cache-ttl-ssh 7200  
 > pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac  
 > enable-ssh-support  
 
