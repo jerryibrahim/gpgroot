@@ -18,4 +18,8 @@ Step 3: [Import keys onto new computer](yubikey_from_offline.md)
 
 **Cons:** There is no way possible to restore the GPG keys to a new Yubikey.  Must have multiple authorized keys (from other Yubikeys) on the remote server incase the Yubikey gets damaged. 
 
-Setup instructions for GPG key generation inside Yubikey: [Yubikey keygen](yubikey_keygen.md) 
+Setup instructions for GPG key generation inside Yubikey: [Yubikey keygen](yubikey_keygen.md)  
+
+
+## Securing SSH with FIDO2 Yubikey  
+[Create FIDO SSH Keys](yubikey_fido.md)  

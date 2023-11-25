@@ -3,9 +3,8 @@
 ## Setup Mac for Yubikey and GPG
 
 ```
-> brew cask install gpg-suite
-> brew install gnupg ykman ykpers libyubikey yubico-piv-tool ykneomgr
-> which gpg2 (check if gpg2 is already installed, if not brew install gpg2)
+> brew install --cask gpg-suite
+> brew install gnupg ykman ykpers libyubikey yubico-piv-tool
 ```
 
 ## Import GPG keys
@@ -36,18 +35,35 @@ Should see Yubikey info and gpg keys
 ```
 > gpg --card-status 
 ```
-
-## Disable ssh-agent at login
+  
+## Setup Yubikey PIV PIN
+ 
+1. Change Yubikey PIN: [default 123456, keep to 6 digits]  
+2. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
+3. Change PIN|PUK retries to 5
 
 ```
-> sudo launchctl disable user/username/com.openssh.ssh-agent -w
-
-- or -
-
-> mdfind ssh-agent|grep plist
-> launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
-> sudo launchctl disable system/com.openssh.ssh-agent
+> yubico-piv-tool -a change-pin
+> yubico-piv-tool -a change-puk
+> yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
 ```
+
+## Setup Yubikey GPG PIN
+
+```
+>  gpg --card-edit
+```
+**Prompts:**  
+
+* gpg/card> **admin**
+* gpg/card> **passwd**  
+* Your selection? **3** [change Admin PIN, default 12345678, recommend same as PUK PIN]  
+* Your selection? **1** [change PIN, default 123456, recommend same as PIV PIN]  
+* Your selection? **q** [quit]  
+* gpg/card> **name**  
+* Cardholder's surname: **Lastname**  
+* Cardholder's given name: **Firstname**  
+* gpg/card> **quit** [enter admin PIN when prompted]
 
 ## Launch gpg-agent in ssh emulation mode at login
 Append the following to ~/.gnupg/gpg-agent.conf  
@@ -78,38 +94,7 @@ Append the following to ~/.bash\_profile (or other profile script)
 > echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.zprofile
 
 # exit terminal and restart terminal shell
-```
-
-
-## Setup Yubikey PIV PIN
- 
-1. Change Yubikey PIN: [default 123456, keep to 6 digits]  
-2. Change Yubikey Admin PUK: [default 12345678, keep to 8 digits]  
-3. Change PIN|PUK retries to 5
-
-```
-> yubico-piv-tool -a change-pin
-> yubico-piv-tool -a change-puk
-> yubico-piv-tool -a verify -a pin-retries --puk-retries=5 --pin-retries=5
-```
-
-## Setup Yubikey GPG PIN
-
-```
->  gpg --card-edit
-```
-**Prompts:**  
-
-* gpg/card> **admin**
-* gpg/card> **passwd**  
-* Your selection? **3** [change Admin PIN, default 12345678, recommend same as PUK PIN]  
-* Your selection? **1** [change PIN, default 123456, recommend same as PIV PIN]  
-* Your selection? **q** [quit]  
-* gpg/card> **name**  
-* Cardholder's surname: **Lastname**  
-* Cardholder's given name: **Firstname**  
-* gpg/card> **quit** [enter admin PIN when prompted]
-
+```  
 
 ## Setup Yubikey to auto eject after 5 min
 
@@ -120,3 +105,21 @@ Append the following to ~/.bash\_profile (or other profile script)
 
 ## Yubikey Usage Info
 [Yubikey usage](yubikey_usage.md) 
+
+
+
+# 
+# LEGACY - Use gpg-agent instead of ssh-agent 
+
+## Disable ssh-agent at login
+
+```
+> sudo launchctl disable user/username/com.openssh.ssh-agent -w
+
+- or -
+
+> mdfind ssh-agent|grep plist
+> launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
+> sudo launchctl disable system/com.openssh.ssh-agent
+```
+
