@@ -32,6 +32,10 @@
 > git log --show-signature  # To verify git commit has signature
 ```
 
+## GPG Forwarding to remote server
+
+[Yubikey GPG Forwarding and sudo](yubikey_forwarding.md)
+
 ## Publish Public GPG key to keyserver
 
 ```bash

@@ -3,8 +3,8 @@
 ## Setup Mac for Yubikey and GPG
 
 ```bash
-> brew install --cask gpg-suite
-> brew install gnupg ykman ykpers libyubikey yubico-piv-tool
+brew install --cask gpg-suite
+brew install gnupg ykman ykpers libyubikey yubico-piv-tool
 ```
 
 ## Import GPG keys
@@ -12,16 +12,16 @@
 Insert Yubikey into usb port. Copy contents to ~/Documents/keys
 
 ```bash
-> mkdir ~/Documents/keys
-> cd ~/Documents/keys
+mkdir ~/Documents/keys
+cd ~/Documents/keys
 
 # copy your keys from usb drive to the new keys folder just created
 
-> ykman list  (shows serial of Yubikey)
-> gpg --import masterstubs.txt  [enter passphrase]
-> gpg --import subkeysstubs.txt
-> gpg --import publickey.txt
-> gpg --edit-key user@domain.com
+ykman list  (shows serial of Yubikey)
+gpg --import masterstubs.txt  [enter passphrase]
+gpg --import subkeysstubs.txt
+gpg --import publickey.txt
+gpg --edit-key user@domain.com
 ```
 
 **Prompts:**
@@ -34,7 +34,7 @@ Insert Yubikey into usb port. Copy contents to ~/Documents/keys
 Should see Yubikey info and gpg keys
 
 ```bash
-> gpg --card-status
+gpg --card-status
 ```
 
 ## Setup Yubikey PIV PIN
@@ -52,7 +52,7 @@ Should see Yubikey info and gpg keys
 ## Setup Yubikey GPG PIN
 
 ```bash
->  gpg --card-edit
+gpg --card-edit
 ```
 
 **Prompts:**
@@ -69,43 +69,50 @@ Should see Yubikey info and gpg keys
 
 ## Launch gpg-agent in ssh emulation mode at login
 
-Append the following to ~/.gnupg/gpg-agent.conf
+Append the following to ~/.gnupg/gpg-agent.conf  
+Use "gpgconf --list-dirs agent-extra-socket" to get <LOCAL_SOCKET_EXTRA>
 
 > default-cache-ttl-ssh 600  
 > max-cache-ttl-ssh 7200  
 > pinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac  
 > enable-ssh-support
+> extra-socket <LOCAL_SOCKET_EXTRA>
 
 ```bash
-> echo -e "\n# Added for Yubikey support\ndefault-cache-ttl-ssh 600\nmax-cache-ttl-ssh 7200\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\n" >> ~/.gnupg/gpg-agent.conf
+echo -e "\n# Added for Yubikey support\ndefault-cache-ttl-ssh 600\nmax-cache-ttl-ssh 7200\npinentry-program /usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac\nenable-ssh-support\nextra-socket $(gpgconf --list-dirs agent-extra-socket)\n" >> ~/.gnupg/gpg-agent.conf
 ```
 
 ## Update terminal profiles
 
-Update your .bash_profile, .zshrc, .zprofile. You will need to restart your shell or source your profile script.  
-Append the following to ~/.bash_profile (or other profile script)
+Update your .bash_profile, .zprofile. You will need to restart your shell or source your profile script.  
+Append the following to ~/.bash_profile (or other profile script)  
+Use "gpgconf --list-dirs agent-ssh-socket" to get <LOCAL_SOCKET_SSH>
 
 > export LANG=en  
 > export LC_ALL=en_US.UTF-8  
 > export GPG_TTY=$(tty)  
-> export SSH_AUTH_SOCK=\$HOME/.gnupg/S.gpg-agent.ssh  
+> export SSH_AUTH_SOCK=<LOCAL_SOCKET_SSH>  
 > gpg-agent --daemon  
 > alias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'
 
+### bash profile
+
 ```bash
-# bash profile
-> echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.bash_profile
-
-# zsh profile
-> echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.zprofile
-
-# exit terminal and restart terminal shell
+echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.bash_profile
 ```
+
+### zsh profile
+
+```bash
+echo -e "\n# Added for Yubikey support\nexport LANG=en\nexport LC_ALL=en_US.UTF-8\nexport GPG_TTY=$(tty)\nexport SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)\ngpg-agent --daemon\n\nalias gpgreset='gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye'\n" >> ~/.zprofile
+```
+
+Exit terminal and restart terminal shell
 
 ## Setup Yubikey to auto eject after 5 min
 
 ```bash
-> ykman config usb --autoeject-timeout 300
+ykman config usb --autoeject-timeout 300
 ```
 
 ## Yubikey Usage Info
@@ -117,11 +124,11 @@ Append the following to ~/.bash_profile (or other profile script)
 ## Disable ssh-agent at login
 
 ```bash
-> sudo launchctl disable user/username/com.openssh.ssh-agent -w
+sudo launchctl disable user/username/com.openssh.ssh-agent -w
 
 - or -
 
-> mdfind ssh-agent|grep plist
-> launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
-> sudo launchctl disable system/com.openssh.ssh-agent
+mdfind ssh-agent|grep plist
+launchctl unload -w /System/Library/LaunchAgents/com.openssh.ssh-agent.plist
+sudo launchctl disable system/com.openssh.ssh-agent
 ```
