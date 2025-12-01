@@ -1,12 +1,11 @@
 # Yubikey usage information
 
-
 ## Create public ssh key and copy to remote computer’s authorized_keys
 
-1. Generate public ssh key  
+1. Generate public ssh key
 2. Create phantom private to enable ssh-copy-id to work
 
-```
+```bash
 > cd ~/.ssh
 > ssh-add -L > username_yubi.pub
 > cp username_yubi.pub username_yubi
@@ -15,16 +14,16 @@
 
 **Optional:** copy to remote system’s ~/.ssh/authorized_keys
 
-```
+```bash
 > ssh-copy-id -i username_yubi.pub user@hostname
 ```
 
-
 ## Setup GIT for GPG signing
-1. Login into Github, Gitlab, Bitbucket and upload GPG public key **publickey.txt**  
-2. Use last 16 chars of signature key and configure git  
 
-```
+1. Login into Github, Gitlab, Bitbucket and upload GPG public key **publickey.txt**
+2. Use last 16 chars of signature key and configure git
+
+```bash
 > gpg --list-secret-keys --keyid-format LONG  # Capture 16 chars after rsa4096/ of signature key
 > gpg --list-secret-keys --keyid-format LONG | grep "\[S\]" | awk '{print $2}' | cut -c9-24
 > git config --global user.signingkey <16 chars>
@@ -35,15 +34,16 @@
 
 ## Publish Public GPG key to keyserver
 
-```
+```bash
 > gpg --keyserver keys.openpgp.org --send-key user@domain.com
 ```
 
 ## Import Someone's Public GPG Key
+
 Import a file that is distributed to you or you can search from a keyserver.
 
-```
-> gpg --import someone_publickey.txt 
+```bash
+> gpg --import someone_publickey.txt
 > gpg --keyserver keys.openpgp.org --search someone@else.com
 > gpg --keyserver keys.openpgp.org --recv-keys <fingerprint>
 
@@ -58,9 +58,10 @@ gpg> tsign  (Select I trust fully, select depth, then enter GPG Passphrase, then
 ```
 
 ## Encrypt / Decrypt with GPG
+
 Verify signature file \<filename.asc\> with the actual file \<filename\>
 
-```
+```bash
 > gpg --encrypt --sign --recipient <someone@else.com> <filename>  (encrypted output is <filename>.gpg)
 
 > gpg --decrypt <filename).gpg
@@ -68,4 +69,3 @@ Verify signature file \<filename.asc\> with the actual file \<filename\>
 
 > gpg --verify <filename.asc> <filename>
 ```
-

@@ -1,12 +1,13 @@
 # Setup Offline Server
+
 Using Debian v10 (buster)  
-Using VMWare Fusion 
+Using VMWare Fusion
 
 ## Setup minimal server with user as the username
 
 ### Install some utilities
-  
-```
+
+```bash
 > su root (so you can install sudo)
 > apt install sudo
 > /usr/sbin/usermod -aG sudo user
@@ -16,7 +17,7 @@ Using VMWare Fusion
 
 ### Now sudo works install rest of tools
 
-```
+```bash
 > sudo apt install exfat-fuse
 > sudo apt install gnupg2
 > sudo apt install scdaemon
@@ -25,9 +26,9 @@ Using VMWare Fusion
 > sudo apt install pcscd
 > sudo apt install pcsc-tools
 > sudo apt install software-properties-common
-> sudo apt install libyubikey-dev 
-> sudo apt install pkg-config 
-> sudo apt install libusb-1.0-0-dev 
+> sudo apt install libyubikey-dev
+> sudo apt install pkg-config
+> sudo apt install libusb-1.0-0-dev
 > sudo apt install libjson-c-dev
 > sudo apt install vim
 > sudo apt install git
@@ -46,7 +47,7 @@ Using VMWare Fusion
 
 ### Install helper scripts/template
 
-```
+```bash
 > cd ~
 > git clone https://github.com/jerryibrahim/gpgroot
 > cp -r ~/gpgroot/scripts ~/scripts
@@ -54,47 +55,48 @@ Using VMWare Fusion
 > rm -rf gpgroot
 ```
 
-### Validate Encrypted USB stick is visible:
+### Validate Encrypted USB stick is visible
 
-```
+```bash
 > lsusb  (list usb devices)
 > lsblk  (find where the drive is)
 ```
 
-### Modify USB UUID for primary, backup, and xfer USB sticks 
+### Modify USB UUID for primary, backup, and xfer USB sticks
 
-```
+```bash
 > vim ~/scripts/primary_mount.sh
 > vim ~/scripts/backup_mount.sh
 > vim ~/scripts/xfer_mount.sh (uses XFER label)
 > vim ~/scripts/xfer_2_mount.sh
 ```
 
-### Update $PATH to include /sbin and ~/scripts 
+### Update $PATH to include /sbin and ~/scripts
 
-```
+```bash
 > echo -e "\nexport PATH=\"$PATH:/sbin:~/scripts\"\n" >> .bashrc
 ```
 
+## For VMWare
 
-## For VMWare:  
 1. Remove network adapter after all utilities are installed
 
 2. Update VMWare to allow usb passthrough for Yubikey  
-<https://support.yubico.com/support/solutions/articles/15000008891-troubleshooting-vmware-workstation-device-passthrough>
+   <https://support.yubico.com/support/solutions/articles/15000008891-troubleshooting-vmware-workstation-device-passthrough>
 
-3. **Updating the Virtual Machine's Configuration**  
+3. **Updating the Virtual Machine's Configuration**
 
-	* Shut down the virtual machine  
-	* Locate the VM's .vmx configuration file. For more information, see VMWare's KB article on this. Open the configuration file with a text editor.
-	* Add the two lines below to the file and save it.
-		* **usb.generic.allowHID = "TRUE"**
-		* **usb.generic.allowLastHID = "TRUE"**
-	
-	* At this point, a non-shared YubiKey or Security Key should be available for passthrough. If not, you may need to manually specify the USB vendor ID and product ID in the configuration file as well. The example below is for a YubiKey 4.
-	
-		* **usb.quirks.device0 = "0x1050:0x0407 allow"**
+   - Shut down the virtual machine
 
-4. **Install vmware tools:**  
-<https://docs.vmware.com/en/VMware-vSphere/5.5/com.vmware.vmtools.install.doc/GUID-08BB9465-D40A-4E16-9E15-8C016CC8166F.html>
+   - Locate the VM's .vmx configuration file. For more information, see VMWare's KB article on this. Open the configuration file with a text editor.
+   - Add the two lines below to the file and save it.
 
+     - **usb.generic.allowHID = "TRUE"**
+     - **usb.generic.allowLastHID = "TRUE"**
+
+   - At this point, a non-shared YubiKey or Security Key should be available for passthrough. If not, you may need to manually specify the USB vendor ID and product ID in the configuration file as well. The example below is for a YubiKey 4.
+
+     - **usb.quirks.device0 = "0x1050:0x0407 allow"**
+
+4. **Install vmware tools**  
+   <https://docs.vmware.com/en/VMware-vSphere/5.5/com.vmware.vmtools.install.doc/GUID-08BB9465-D40A-4E16-9E15-8C016CC8166F.html>
